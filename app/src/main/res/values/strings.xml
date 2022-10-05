@@ -5,4 +5,7 @@
     <string name="LoginButton">Login</string>
     <string name="OpenMenu">Open Menu</string>
     <string name="ArticlesListNetworkError">An error has occurred while fetching the articles</string>
+    <string name="Favorites">Favorites</string>
+    <string name="Articles">Articles</string>
+    <string name="LoremIpsumTitle">Ad sint id fugiat consectetur tempor irure culpa incididunt in minim commodo.</string>
 </resources>

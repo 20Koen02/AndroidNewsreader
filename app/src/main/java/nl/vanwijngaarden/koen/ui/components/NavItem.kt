@@ -9,6 +9,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -18,7 +19,9 @@ fun NavItem(
     selectedItem: MutableState<Int>,
     drawerState: DrawerState,
     icon: ImageVector,
-    label: String
+    label: String,
+    navController: NavController,
+    destination: String
 ) {
     val scope = rememberCoroutineScope()
 
@@ -35,6 +38,7 @@ fun NavItem(
         onClick = {
             scope.launch { drawerState.close() }
             selectedItem.value = i
+            navController.navigate(destination)
         },
         modifier = Modifier.padding(end = 16.dp),
         shape = RoundedCornerShape(topEndPercent = 50, bottomEndPercent = 50)

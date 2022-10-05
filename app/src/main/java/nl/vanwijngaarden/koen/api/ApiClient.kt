@@ -1,6 +1,5 @@
 package nl.vanwijngaarden.koen.api
 
-import nl.vanwijngaarden.koen.api.responses.GetArticlesByIdResponse
 import nl.vanwijngaarden.koen.api.responses.GetArticlesResponse
 import retrofit2.Response
 
@@ -11,7 +10,7 @@ class ApiClient(
         return safeCall { newsreaderService.getArticles() }
     }
 
-    suspend fun getArticleById(id: Int): CustomResponse<GetArticlesByIdResponse> {
+    suspend fun getArticleById(id: Int): CustomResponse<GetArticlesResponse> {
         return safeCall { newsreaderService.getArticleById(id) }
     }
 

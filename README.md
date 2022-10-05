@@ -19,13 +19,13 @@ Android Newsreader for Inholland Mobile Development minor
 #### Main page
 - [x] The main page of the application must show a list or grid of articles; the newest article on top.
 - [x] The list or grid must be implemented using a LazyColumn or some other lazy way. The backend will return articles in batches of 20.
-- [ ] The list must gradually load new pages when the user reaches the bottom
-- [ ] A placeholder should be visible for each image that will be fetched from the backend
+- [x] The list must gradually load new pages when the user reaches the bottom
+- [x] A placeholder should be visible for each image that will be fetched from the backend
 - [x] Each article has various properties. At least the image and the title of the article must be shown in the list or grid.
 - [ ] When the user selects an article in the list or grid, the app must navigate to the details page of that article.
 - [ ] When the user is logged in, the articles in the list must show some indicator whether or not they are on the favorites (liked) list of the user.
 - [x] Create a way for the user to refresh the articles on the main page (pull to refresh, or some other way to refresh)
-- [ ] Show some indicator (spinner or progress bar) when the app is getting the articles, so the user knows that the app is doing something.
+- [x] Show some indicator (spinner or progress bar) when the app is getting the articles, so the user knows that the app is doing something.
 
 #### Details page
 - [ ] The details page shows at least these details of an article: title, summary, image, full article url (which may reside behind a clickable View).

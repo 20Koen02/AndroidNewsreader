@@ -1,4 +1,4 @@
-package nl.vanwijngaarden.koen.ui.components
+package nl.vanwijngaarden.koen.ui.home
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
@@ -7,8 +7,8 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -22,13 +22,13 @@ import nl.vanwijngaarden.koen.viewmodels.SharedViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NRScaffold(
-    model: SharedViewModel = viewModel(),
+fun HomeScaffold(
+    sharedModel: SharedViewModel = viewModel(),
     drawerState: DrawerState,
     content: @Composable (innerPadding: PaddingValues) -> Unit  // Padding determined by scaffold
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val isLoading by model.loadingLD.observeAsState()
+    val isLoading by sharedModel.loadingState.collectAsState()
 
     val scope = rememberCoroutineScope()
 
@@ -53,9 +53,9 @@ fun NRScaffold(
                 },
                 actions = {
                     IconButton(onClick = {
-                        model.refreshArticles()
+                        sharedModel.refreshArticles()
                     }) {
-                        if (isLoading == true) {
+                        if (isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(16.dp),
                                 strokeWidth = 2.dp

@@ -15,12 +15,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import nl.vanwijngaarden.koen.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NRNavDrawer(
+fun NavDrawer(
     drawerState: DrawerState,
+    navController: NavController,
     content: @Composable () -> Unit
 ) {
     val selectedItem = remember { mutableStateOf(0) }
@@ -57,8 +59,8 @@ fun NRNavDrawer(
                     )
                 }
                 Divider(modifier = Modifier.alpha(0.5F).padding(bottom = 16.dp))
-                NavItem(0, selectedItem, drawerState, Icons.Default.Home, "Articles")
-                NavItem(1, selectedItem, drawerState, Icons.Default.Favorite, "Favorite")
+                NavItem(0, selectedItem, drawerState, Icons.Default.Home, stringResource(R.string.Articles), navController, "home")
+                NavItem(1, selectedItem, drawerState, Icons.Default.Favorite, stringResource(R.string.Favorites), navController, "favorites")
             }
         },
         content = {

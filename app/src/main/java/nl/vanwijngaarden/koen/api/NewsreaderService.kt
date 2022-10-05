@@ -1,6 +1,5 @@
 package nl.vanwijngaarden.koen.api
 
-import nl.vanwijngaarden.koen.api.responses.GetArticlesByIdResponse
 import nl.vanwijngaarden.koen.api.responses.GetArticlesResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -19,9 +18,9 @@ interface NewsreaderService {
     @GET("Articles/{id}")
     suspend fun getArticleById(
         @Path("id") id: Int,
-        @Query("count") count: Int? = 5,  // default=1
+        @Query("count") count: Int? = 20,  // default=1
         @Query("feed") feed: Int? = null,
         @Query("feeds") feeds: String? = null,
         @Query("category") category: String? = null,
-    ): Response<GetArticlesByIdResponse>
+    ): Response<GetArticlesResponse>
 }

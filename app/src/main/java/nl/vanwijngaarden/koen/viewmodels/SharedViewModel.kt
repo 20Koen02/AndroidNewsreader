@@ -1,31 +1,60 @@
 package nl.vanwijngaarden.koen.viewmodels
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import nl.vanwijngaarden.koen.api.CustomResponse
 import nl.vanwijngaarden.koen.api.Network
-import nl.vanwijngaarden.koen.api.responses.GetArticlesResponse
+import nl.vanwijngaarden.koen.models.Article
 
 class SharedViewModel : ViewModel() {
     private val apiClient = Network.apiClient
 
-    private val _articlesLiveData = MutableLiveData<CustomResponse<GetArticlesResponse>>()
-    val articlesLiveData: LiveData<CustomResponse<GetArticlesResponse>> = _articlesLiveData
+    // Articles. Empty = not loaded or failed
+    private val _articlesState = MutableStateFlow(emptyList<Article>())
+    val articlesState: StateFlow<List<Article>> = _articlesState
 
-    private val _loadingLD = MutableLiveData(false)
-    val loadingLD: LiveData<Boolean> = _loadingLD
+    // Next Articles Batch Id. Loaded on successful articles request
+    private val _nextId = MutableStateFlow<Int?>(null)
+
+    // Failed boolean
+    private val _failedState = MutableStateFlow(false)
+    val failedState: StateFlow<Boolean> = _failedState
+
+    // True when refreshArticles is running
+    private val _loadingState = MutableStateFlow(false)
+    val loadingState: StateFlow<Boolean> = _loadingState
+
+    init {
+        refreshArticles()
+    }
 
     fun refreshArticles() {
         viewModelScope.launch {
-            Log.i("SharedViewModel", "Refreshing Articles")
-            _loadingLD.value = true
+            _loadingState.value = true
+            _nextId.value = null
+
             val response = apiClient.getArticles()
-            _articlesLiveData.postValue(response)
-            _loadingLD.value = false
+            if (articlesState.value.isEmpty()) _failedState.value = !response.isSuccessful
+            if (response.isSuccessful) {
+                _articlesState.value = Article.fromResponse(response.body)
+                _nextId.value = response.body.nextId
+            }
+
+            _loadingState.value = false
+        }
+    }
+
+    fun loadMoreArticles() {
+        if (_nextId.value != null) {
+            viewModelScope.launch {
+                val response = apiClient.getArticleById(_nextId.value!!)
+                if (response.isSuccessful) {
+                    _articlesState.value = _articlesState.value + Article.fromResponse(response.body)
+                    _nextId.value = response.body.nextId
+                }
+            }
         }
     }
 }

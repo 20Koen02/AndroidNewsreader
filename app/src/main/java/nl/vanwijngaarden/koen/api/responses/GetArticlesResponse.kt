@@ -1,6 +1,5 @@
 package nl.vanwijngaarden.koen.api.responses
 
-
 import com.squareup.moshi.Json
 
 data class GetArticlesResponse(
