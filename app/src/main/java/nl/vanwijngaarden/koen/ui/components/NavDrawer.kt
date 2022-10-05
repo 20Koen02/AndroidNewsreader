@@ -29,6 +29,7 @@ fun NavDrawer(
 
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = drawerState.isOpen,
         drawerContent = {
             ModalDrawerSheet(modifier = Modifier.width(304.dp)) {
                 Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))

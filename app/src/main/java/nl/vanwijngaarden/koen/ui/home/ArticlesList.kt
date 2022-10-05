@@ -14,18 +14,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshState
 import nl.vanwijngaarden.koen.R
-import nl.vanwijngaarden.koen.ui.components.InfiniteListHandler
+import nl.vanwijngaarden.koen.ui.components.OnBottomReached
 import nl.vanwijngaarden.koen.viewmodels.SharedViewModel
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ArticlesList(
     innerPadding: PaddingValues,
-    sharedModel: SharedViewModel = viewModel()
+    sharedModel: SharedViewModel,
+    navController: NavController
 ) {
     val articles by sharedModel.articlesState.collectAsState()
     val failedState by sharedModel.failedState.collectAsState()
@@ -43,7 +44,7 @@ fun ArticlesList(
                 LazyColumn(
                     state = listState,
                 ) {
-                    items(articles) { ArticlesListItem(it) }
+                    items(articles) { ArticlesListItem(it, sharedModel, navController) }
                     items(1) {
                         Row(
                             horizontalArrangement = Arrangement.Center,
@@ -59,7 +60,7 @@ fun ArticlesList(
                     }
                 }
 
-                InfiniteListHandler(listState = listState) {
+                listState.OnBottomReached(buffer = 2) {
                     sharedModel.loadMoreArticles()
                 }
             }

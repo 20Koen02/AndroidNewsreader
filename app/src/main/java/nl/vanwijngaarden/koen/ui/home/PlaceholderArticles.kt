@@ -1,9 +1,14 @@
 package nl.vanwijngaarden.koen.ui.home
 
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,11 +28,12 @@ import nl.vanwijngaarden.koen.R
 @Composable
 fun PlaceholderArticles(innerPadding: PaddingValues) {
     LazyColumn(
-        modifier = androidx.compose.ui.Modifier
+        modifier = Modifier
             .consumedWindowInsets(innerPadding)
-            .padding(innerPadding)
+            .padding(innerPadding),
+        userScrollEnabled = false
     ) {
-        items(6) { i ->
+        items(10) { i ->
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 Row(
                     modifier = Modifier.padding(vertical = 12.dp),
@@ -39,7 +45,8 @@ fun PlaceholderArticles(innerPadding: PaddingValues) {
                             .clip(RoundedCornerShape(4.dp))
                             .placeholder(
                                 visible = true,
-                                highlight = PlaceholderHighlight.shimmer()
+                                highlight = PlaceholderHighlight.shimmer(),
+                                color = MaterialTheme.colorScheme.surfaceVariant
                             ),
                     )
                     Column(modifier = Modifier.padding(start = 16.dp)) {
@@ -50,14 +57,14 @@ fun PlaceholderArticles(innerPadding: PaddingValues) {
                             lineHeight = 18.sp,
                             modifier = Modifier.placeholder(
                                 visible = true,
-                                highlight = PlaceholderHighlight.shimmer()
+                                highlight = PlaceholderHighlight.shimmer(),
+                                color = MaterialTheme.colorScheme.surfaceVariant
                             ),
                         )
                     }
                 }
                 Divider(modifier = Modifier.alpha(0.5F))
             }
-
         }
     }
 }

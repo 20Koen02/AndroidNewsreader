@@ -7,5 +7,8 @@
     <string name="ArticlesListNetworkError">An error has occurred while fetching the articles</string>
     <string name="Favorites">Favorites</string>
     <string name="Articles">Articles</string>
-    <string name="LoremIpsumTitle">Ad sint id fugiat consectetur tempor irure culpa incididunt in minim commodo.</string>
+    <string name="LoremIpsumTitle" translatable="false">Ad sint id fugiat consectetur tempor irure culpa incididunt in minim commodo.</string>
+    <string name="Details">Details</string>
+    <string name="AddToFavorites">Add to Favorites</string>
+    <string name="GoBack">Go Back</string>
 </resources>

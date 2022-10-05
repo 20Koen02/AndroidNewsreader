@@ -21,7 +21,7 @@ import nl.vanwijngaarden.koen.viewmodels.SharedViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoritesScaffold(
-    sharedModel: SharedViewModel = viewModel(),
+    sharedModel: SharedViewModel,
     drawerState: DrawerState,
     content: @Composable (innerPadding: PaddingValues) -> Unit  // Padding determined by scaffold
 ) {

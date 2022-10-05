@@ -1,5 +1,6 @@
 package nl.vanwijngaarden.koen.ui.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -16,14 +17,23 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import nl.vanwijngaarden.koen.Screen
 import nl.vanwijngaarden.koen.models.Article
+import nl.vanwijngaarden.koen.viewmodels.SharedViewModel
 
 @Composable
 fun ArticlesListItem(
-    article: Article
+    article: Article,
+    sharedModel: SharedViewModel,
+    navController: NavController
 ) {
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+    Column(modifier = Modifier.padding(horizontal = 16.dp).clickable {
+        sharedModel.setDetailArticle(article)
+        navController.navigate(Screen.DetailsScreen.route + "/${article.id}")
+    }) {
         Row(
             modifier = Modifier.padding(vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically

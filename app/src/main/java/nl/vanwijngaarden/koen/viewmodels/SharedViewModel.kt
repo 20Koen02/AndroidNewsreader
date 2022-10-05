@@ -1,7 +1,9 @@
 package nl.vanwijngaarden.koen.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -26,8 +28,23 @@ class SharedViewModel : ViewModel() {
     private val _loadingState = MutableStateFlow(false)
     val loadingState: StateFlow<Boolean> = _loadingState
 
+    private val _detailArticleState = MutableStateFlow<Article?>(null)
+    val detailArticle: StateFlow<Article?> = _detailArticleState
+
     init {
         refreshArticles()
+    }
+
+    fun setDetailArticle(article: Article) {
+        _detailArticleState.value = article
+    }
+
+    fun getDetailArticle(id: String, navController: NavController): StateFlow<Article?> {
+        // extra check
+        if (detailArticle.value == null || detailArticle.value!!.id != id.toInt()) {
+            navController.navigateUp()
+        }
+        return detailArticle
     }
 
     fun refreshArticles() {
@@ -51,7 +68,8 @@ class SharedViewModel : ViewModel() {
             viewModelScope.launch {
                 val response = apiClient.getArticleById(_nextId.value!!)
                 if (response.isSuccessful) {
-                    _articlesState.value = _articlesState.value + Article.fromResponse(response.body)
+                    _articlesState.value =
+                        _articlesState.value + Article.fromResponse(response.body)
                     _nextId.value = response.body.nextId
                 }
             }

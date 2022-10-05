@@ -1,5 +1,6 @@
 package nl.vanwijngaarden.koen.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -11,6 +12,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,7 +40,12 @@ fun NavItem(
         onClick = {
             scope.launch { drawerState.close() }
             selectedItem.value = i
-            navController.navigate(destination)
+            Log.i("Navigation", navController.backQueue.map {i ->
+                i.destination
+            }.toString())
+            navController.navigate(destination) {
+                popUpTo(0)
+            }
         },
         modifier = Modifier.padding(end = 16.dp),
         shape = RoundedCornerShape(topEndPercent = 50, bottomEndPercent = 50)

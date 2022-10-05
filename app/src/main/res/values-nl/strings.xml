@@ -2,4 +2,7 @@
     <string name="Title">Newsreader</string>
     <string name="RefreshButton">Refresh Artikelen</string>
     <string name="LoginButton">Login</string>
+    <string name="OpenMenu">Open Menu</string>
+    <string name="Favorites">Favorieten</string>
+    <string name="Articles">Artikelen</string>
 </resources>
