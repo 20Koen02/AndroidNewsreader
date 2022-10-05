@@ -1,6 +1,5 @@
 package nl.vanwijngaarden.koen.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -17,17 +16,24 @@ class SharedViewModel : ViewModel() {
     private val _articlesState = MutableStateFlow(emptyList<Article>())
     val articlesState: StateFlow<List<Article>> = _articlesState
 
+
     // Next Articles Batch Id. Loaded on successful articles request
     private val _nextId = MutableStateFlow<Int?>(null)
+    private val _loadingMore = MutableStateFlow<Boolean>(false)
 
     // Failed boolean
-    private val _failedState = MutableStateFlow(false)
-    val failedState: StateFlow<Boolean> = _failedState
+    private val _failedArticlesState = MutableStateFlow(false)
+    val failedArticlesState: StateFlow<Boolean> = _failedArticlesState
+
+    // Failed boolean
+    private val _failedMoreArticlesState = MutableStateFlow(false)
+    val failedMoreArticlesState: StateFlow<Boolean> = _failedMoreArticlesState
 
     // True when refreshArticles is running
     private val _loadingState = MutableStateFlow(false)
     val loadingState: StateFlow<Boolean> = _loadingState
 
+    // Detail
     private val _detailArticleState = MutableStateFlow<Article?>(null)
     val detailArticle: StateFlow<Article?> = _detailArticleState
 
@@ -53,10 +59,11 @@ class SharedViewModel : ViewModel() {
             _nextId.value = null
 
             val response = apiClient.getArticles()
-            if (articlesState.value.isEmpty()) _failedState.value = !response.isSuccessful
+            if (articlesState.value.isEmpty()) _failedArticlesState.value = !response.isSuccessful
             if (response.isSuccessful) {
                 _articlesState.value = Article.fromResponse(response.body)
                 _nextId.value = response.body.nextId
+                _failedArticlesState.value = false
             }
 
             _loadingState.value = false
@@ -64,14 +71,18 @@ class SharedViewModel : ViewModel() {
     }
 
     fun loadMoreArticles() {
-        if (_nextId.value != null) {
+        if (_nextId.value != null && !_loadingMore.value) {
+            _loadingMore.value = true
             viewModelScope.launch {
                 val response = apiClient.getArticleById(_nextId.value!!)
+                _failedMoreArticlesState.value = !response.isSuccessful
                 if (response.isSuccessful) {
                     _articlesState.value =
                         _articlesState.value + Article.fromResponse(response.body)
                     _nextId.value = response.body.nextId
+                    _failedMoreArticlesState.value = false
                 }
+                _loadingMore.value = false
             }
         }
     }

@@ -11,4 +11,6 @@
     <string name="Details">Details</string>
     <string name="AddToFavorites">Add to Favorites</string>
     <string name="GoBack">Go Back</string>
+    <string name="OpenInBrowser">Open in Browser</string>
+    <string name="Share">Share</string>
 </resources>

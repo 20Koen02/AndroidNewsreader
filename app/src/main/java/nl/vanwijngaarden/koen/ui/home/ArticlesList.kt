@@ -4,7 +4,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,7 +33,8 @@ fun ArticlesList(
     navController: NavController
 ) {
     val articles by sharedModel.articlesState.collectAsState()
-    val failedState by sharedModel.failedState.collectAsState()
+    val failedState by sharedModel.failedArticlesState.collectAsState()
+    val failedMoreArticlesState by sharedModel.failedMoreArticlesState.collectAsState()
     val listState = rememberLazyListState()
 
     if (!failedState) {
@@ -50,12 +55,21 @@ fun ArticlesList(
                             horizontalArrangement = Arrangement.Center,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .size(24.dp),
-                                strokeWidth = 3.dp
-                            )
+                            if (failedMoreArticlesState) {
+                                IconButton(onClick = { sharedModel.loadMoreArticles() }) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Refresh,
+                                        contentDescription = stringResource(R.string.RefreshButton)
+                                    )
+                                }
+                            } else {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .size(24.dp),
+                                    strokeWidth = 3.dp
+                                )
+                            }
                         }
                     }
                 }

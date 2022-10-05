@@ -52,10 +52,7 @@ fun NavDrawer(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                        lineHeight = MaterialTheme.typography.titleLarge.lineHeight,
-                        fontStyle = MaterialTheme.typography.titleLarge.fontStyle,
-                        fontWeight = MaterialTheme.typography.titleLarge.fontWeight,
+                        style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.padding(start = 8.dp)
                     )
                 }

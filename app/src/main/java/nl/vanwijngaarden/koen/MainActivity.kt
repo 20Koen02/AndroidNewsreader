@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -12,10 +14,8 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import nl.vanwijngaarden.koen.ui.components.NavDrawer
@@ -27,6 +27,9 @@ import nl.vanwijngaarden.koen.viewmodels.SharedViewModel
 
 
 class MainActivity : ComponentActivity() {
+    val slidingDur = 300
+    val fadeDur = 400
+
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,20 +49,85 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
-                val navController = rememberNavController()
+                val navController = rememberAnimatedNavController()
                 val drawerState = rememberDrawerState(DrawerValue.Closed)
                 NavDrawer(drawerState = drawerState, navController = navController) {
-                    NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
-                            composable(Screen.HomeScreen.route) {
-                                HomeScreen(sharedModel = sharedModel, drawerState = drawerState, navController)
-                            }
-                            composable(Screen.FavoritesScreen.route) {
-                                FavoritesScreen(sharedModel = sharedModel, drawerState = drawerState)
-                            }
-                            composable(Screen.DetailsScreen.route + "/{id}") {
-                                DetailsScreen(sharedModel = sharedModel, drawerState = drawerState, navController, it.arguments?.getString("id"))
-                            }
+                    AnimatedNavHost(
+                        navController = navController,
+                        startDestination = Screen.HomeScreen.route
+                    ) {
+                        composable(
+                            Screen.HomeScreen.route,
+                            exitTransition = {
+                                when (targetState.destination.route) {
+                                    Screen.DetailsScreen.route + "/{id}" ->
+                                        slideOutHorizontally(
+                                            targetOffsetX = { -it },
+                                            animationSpec = tween(
+                                                durationMillis = slidingDur,
+                                                easing = FastOutSlowInEasing
+                                            )
+                                        ) + fadeOut(animationSpec = tween(slidingDur))
+                                    else -> fadeOut(animationSpec = tween(fadeDur))
+                                }
+                            },
+                            enterTransition = {
+                                when (initialState.destination.route) {
+                                    Screen.DetailsScreen.route + "/{id}" ->
+                                        slideInHorizontally(
+                                            initialOffsetX = { -it },
+                                            animationSpec = tween(
+                                                durationMillis = slidingDur,
+                                                easing = FastOutSlowInEasing
+                                            )
+                                        ) + fadeIn(animationSpec = tween(slidingDur))
+                                    else -> fadeIn(animationSpec = tween(fadeDur))
+                                }
+                            },
+
+                            ) {
+                            HomeScreen(
+                                sharedModel = sharedModel,
+                                drawerState = drawerState,
+                                navController
+                            )
                         }
+                        composable(
+                            Screen.FavoritesScreen.route,
+                            exitTransition = { fadeOut(animationSpec = tween(fadeDur)) },
+                            enterTransition = { fadeIn(animationSpec = tween(fadeDur)) }
+                        ) {
+                            FavoritesScreen(sharedModel = sharedModel, drawerState = drawerState)
+                        }
+                        composable(
+                            Screen.DetailsScreen.route + "/{id}",
+                            exitTransition = {
+                                slideOutHorizontally(
+                                    targetOffsetX = { it },
+                                    animationSpec = tween(
+                                        durationMillis = slidingDur,
+                                        easing = FastOutSlowInEasing
+                                    )
+                                ) + fadeOut(animationSpec = tween(slidingDur))
+                            },
+                            enterTransition = {
+                                slideInHorizontally(
+                                    initialOffsetX = { it },
+                                    animationSpec = tween(
+                                        durationMillis = slidingDur,
+                                        easing = FastOutSlowInEasing
+                                    )
+                                ) + fadeIn(animationSpec = tween(slidingDur))
+                            },
+                        ) {
+                            DetailsScreen(
+                                sharedModel = sharedModel,
+                                drawerState = drawerState,
+                                navController,
+                                it.arguments?.getString("id")
+                            )
+                        }
+                    }
 
                 }
             }
@@ -67,8 +135,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-sealed class Screen(val route:String){
-    object HomeScreen:Screen("home")
-    object FavoritesScreen:Screen("favorites")
-    object DetailsScreen:Screen("details")
+sealed class Screen(val route: String) {
+    object HomeScreen : Screen("home")
+    object FavoritesScreen : Screen("favorites")
+    object DetailsScreen : Screen("details")
 }

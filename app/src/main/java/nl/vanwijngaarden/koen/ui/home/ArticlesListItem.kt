@@ -17,7 +17,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import nl.vanwijngaarden.koen.Screen
@@ -42,7 +41,7 @@ fun ArticlesListItem(
                 modifier = Modifier
                     .size(100.dp, 75.dp)
                     .clip(RoundedCornerShape(4.dp)),
-                model = article.image,
+                model = article.image.replace("sqr256", "wd320"),
                 contentDescription = article.title,
                 contentScale = ContentScale.Crop,
             )

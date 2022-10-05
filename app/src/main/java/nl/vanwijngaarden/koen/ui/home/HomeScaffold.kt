@@ -1,21 +1,20 @@
 package nl.vanwijngaarden.koen.ui.home
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 import nl.vanwijngaarden.koen.R
 import nl.vanwijngaarden.koen.viewmodels.SharedViewModel
@@ -31,6 +30,16 @@ fun HomeScaffold(
     val isLoading by sharedModel.loadingState.collectAsState()
 
     val scope = rememberCoroutineScope()
+
+    val systemUiController = rememberSystemUiController()
+    val useDarkIcons = !isSystemInDarkTheme()
+
+    SideEffect {
+        systemUiController.setSystemBarsColor(
+            color = Color.Transparent,
+            darkIcons = useDarkIcons
+        )
+    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -52,9 +61,12 @@ fun HomeScaffold(
                     }
                 },
                 actions = {
-                    IconButton(onClick = {
-                        sharedModel.refreshArticles()
-                    }) {
+                    IconButton(
+                        onClick = {
+                            sharedModel.refreshArticles()
+                        },
+                        enabled = !isLoading
+                    ) {
                         if (isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(16.dp),
@@ -66,8 +78,6 @@ fun HomeScaffold(
                                 contentDescription = stringResource(R.string.RefreshButton)
                             )
                         }
-
-
                     }
                 },
                 scrollBehavior = scrollBehavior
