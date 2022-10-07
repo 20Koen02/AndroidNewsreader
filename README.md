@@ -1,8 +1,14 @@
 # 🗞 Newsreader - Android App
-<img src="https://github.com/20Koen02/AndroidNewsreader/blob/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" align="right" width="192" height="192" alt="Logo">
+
+
+<img src="https://github.com/20Koen02/AndroidNewsreader/blob/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" align="right" width="100" height="100" alt="Logo">
 
 Android Newsreader for Inholland Mobile Development minor  
-Built with Jetpack Compose & Material 3
+Built with Jetpack Compose & Material 3.  
+Translations for Dutch & English.  
+Support for Material You and a custom green theme. 
+
+
 
 ## Screenshots
 Articles page - Light theme | Details page - Dark Material You | Settings page - Light Material You
