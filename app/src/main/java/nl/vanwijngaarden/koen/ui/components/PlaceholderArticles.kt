@@ -1,9 +1,10 @@
-package nl.vanwijngaarden.koen.ui.home
+package nl.vanwijngaarden.koen.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +30,12 @@ fun PlaceholderArticles(innerPadding: PaddingValues) {
             .padding(innerPadding),
         userScrollEnabled = false
     ) {
+        item {
+            LinearProgressIndicator(
+                Modifier
+                    .fillMaxWidth()
+            )
+        }
         items(10) { i ->
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 Row(

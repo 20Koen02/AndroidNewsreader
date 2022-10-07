@@ -13,4 +13,32 @@
     <string name="GoBack">Go Back</string>
     <string name="OpenInBrowser">Open in Browser</string>
     <string name="Share">Share</string>
+    <string name="Settings">Settings</string>
+    <string name="Login">Login</string>
+    <string name="Logout">Logout</string>
+    <string name="Liked">Liked</string>
+    <string name="removeLikeFailed">Like removal failed</string>
+    <string name="LikeFailed">Like failed</string>
+    <string name="RemoveLikeFailedMessage">There was an error deleting the like</string>
+    <string name="LikeFailMessage">There was an error liking the article</string>
+    <string name="Error">Error</string>
+    <string name="Dismiss">Dismiss</string>
+    <string name="LoginFailed">Login Failed</string>
+    <string name="RegistrationFailed">Registration Failed</string>
+    <string name="LoginFailedMessage">The username or password you provided was incorrect</string>
+    <string name="UserServerError">There was an error connecting with the server</string>
+    <string name="UserExists">This user already exists</string>
+    <string name="Username">Username</string>
+    <string name="Clear">Clear</string>
+    <string name="Appearance">Appearance</string>
+    <string name="MaterialYouSetting" translatable="false">Material You</string>
+    <string name="MaterialYouDesc">Enjoy an experience closer to \nyour device</string>
+    <string name="Theme">Theme</string>
+    <string name="ThemeDescription">What side are you on?</string>
+    <string name="AutomaticTheme">System</string>
+    <string name="LightTheme">Light</string>
+    <string name="DarkTheme">Dark</string>
+    <string name="Password">Password</string>
+    <string name="Categories">Categories</string>
+    <string name="CreateAccount">Create Account</string>
 </resources>

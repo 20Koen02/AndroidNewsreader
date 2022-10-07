@@ -15,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -22,7 +23,10 @@ import androidx.navigation.NavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshState
 import nl.vanwijngaarden.koen.R
-import nl.vanwijngaarden.koen.ui.components.OnBottomReached
+import nl.vanwijngaarden.koen.datastore.ApplicationPreferences
+import nl.vanwijngaarden.koen.ui.components.ArticlesListItem
+import nl.vanwijngaarden.koen.ui.components.PlaceholderArticles
+import nl.vanwijngaarden.koen.ui.util.OnBottomReached
 import nl.vanwijngaarden.koen.viewmodels.SharedViewModel
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -37,11 +41,15 @@ fun ArticlesList(
     val failedMoreArticlesState by sharedModel.failedMoreArticlesState.collectAsState()
     val listState = rememberLazyListState()
 
+    val context = LocalContext.current
+    val dataStore = ApplicationPreferences(context)
+    val token by dataStore.getToken.collectAsState(null)
+
     if (!failedState) {
         if (articles.isNotEmpty()) {
             SwipeRefresh(
                 state = SwipeRefreshState(false),
-                onRefresh = { sharedModel.refreshArticles() },
+                onRefresh = { sharedModel.refreshArticles(authToken = token) },
                 modifier = Modifier
                     .consumedWindowInsets(innerPadding)
                     .padding(innerPadding)
@@ -56,9 +64,11 @@ fun ArticlesList(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             if (failedMoreArticlesState) {
-                                IconButton(onClick = { sharedModel.loadMoreArticles() }) {
+                                IconButton(onClick = {
+                                    sharedModel.loadMoreArticles(token)
+                                }) {
                                     Icon(
-                                        imageVector = Icons.Filled.Refresh,
+                                        imageVector = Icons.Default.Refresh,
                                         contentDescription = stringResource(R.string.RefreshButton)
                                     )
                                 }
@@ -75,7 +85,7 @@ fun ArticlesList(
                 }
 
                 listState.OnBottomReached(buffer = 2) {
-                    sharedModel.loadMoreArticles()
+                    sharedModel.loadMoreArticles(token)
                 }
             }
         } else {

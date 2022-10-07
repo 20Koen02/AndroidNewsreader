@@ -1,6 +1,5 @@
 package nl.vanwijngaarden.koen.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -9,9 +8,11 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
+import nl.vanwijngaarden.koen.datastore.ApplicationPreferences
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,9 +23,11 @@ fun NavItem(
     icon: ImageVector,
     label: String,
     navController: NavController,
-    destination: String
+    destination: String,
+    logoutBeforeNavigating: Boolean = false
 ) {
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     NavigationDrawerItem(
         icon = {
@@ -37,13 +40,16 @@ fun NavItem(
         label = { Text(label) },
         selected = selectedItem.value == i,
         onClick = {
-            scope.launch { drawerState.close() }
-            selectedItem.value = i
-            Log.i("Navigation", navController.backQueue.map {i ->
-                i.destination
-            }.toString())
-            navController.navigate(destination) {
-                popUpTo(0)
+            scope.launch {
+                selectedItem.value = i
+                navController.navigate(destination) {
+                    popUpTo(0)
+                }
+                drawerState.close()
+                if (logoutBeforeNavigating) {
+                    val dataStore = ApplicationPreferences(context)
+                    dataStore.saveToken("")
+                }
             }
         },
         modifier = Modifier.padding(end = 16.dp),

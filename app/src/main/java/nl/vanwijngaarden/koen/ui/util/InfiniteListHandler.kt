@@ -1,4 +1,4 @@
-package nl.vanwijngaarden.koen.ui.components
+package nl.vanwijngaarden.koen.ui.util
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.*

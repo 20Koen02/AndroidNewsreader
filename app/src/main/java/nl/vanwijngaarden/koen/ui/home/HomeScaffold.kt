@@ -11,12 +11,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 import nl.vanwijngaarden.koen.R
+import nl.vanwijngaarden.koen.datastore.ApplicationPreferences
 import nl.vanwijngaarden.koen.viewmodels.SharedViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,12 +34,22 @@ fun HomeScaffold(
     val scope = rememberCoroutineScope()
 
     val systemUiController = rememberSystemUiController()
-    val useDarkIcons = !isSystemInDarkTheme()
 
+    val context = LocalContext.current
+    val dataStore = ApplicationPreferences(context)
+    val savedTheme by dataStore.getTheme.collectAsState(0)
+    val token by dataStore.getToken.collectAsState(null)
+
+    val darkTheme = when (savedTheme) {
+        0 -> isSystemInDarkTheme()
+        1 -> false
+        2 -> true
+        else -> false
+    }
     SideEffect {
         systemUiController.setSystemBarsColor(
             color = Color.Transparent,
-            darkIcons = useDarkIcons
+            darkIcons = !darkTheme
         )
     }
 
@@ -55,7 +67,7 @@ fun HomeScaffold(
                 navigationIcon = {
                     IconButton(onClick = { scope.launch { drawerState.open() } }) {
                         Icon(
-                            imageVector = Icons.Filled.Menu,
+                            imageVector = Icons.Default.Menu,
                             contentDescription = stringResource(R.string.OpenMenu)
                         )
                     }
@@ -63,7 +75,7 @@ fun HomeScaffold(
                 actions = {
                     IconButton(
                         onClick = {
-                            sharedModel.refreshArticles()
+                            sharedModel.refreshArticles(authToken = token)
                         },
                         enabled = !isLoading
                     ) {
@@ -74,7 +86,7 @@ fun HomeScaffold(
                             )
                         } else {
                             Icon(
-                                imageVector = Icons.Filled.Refresh,
+                                imageVector = Icons.Default.Refresh,
                                 contentDescription = stringResource(R.string.RefreshButton)
                             )
                         }

@@ -27,9 +27,9 @@ fun DetailsScreen(
     require(article != null)
 
     DetailsScaffold(
-        navController = navController,
-        article = article!!
+        sharedModel = sharedModel,
+        navController = navController
     ) {
-        DetailsContent(article!!)
+        DetailsContent(sharedModel)
     }
 }

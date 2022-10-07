@@ -2,36 +2,44 @@ package nl.vanwijngaarden.koen.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import nl.vanwijngaarden.koen.R
+import nl.vanwijngaarden.koen.Screen
+import nl.vanwijngaarden.koen.datastore.ApplicationPreferences
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavDrawer(
     drawerState: DrawerState,
     navController: NavController,
+    selectedItem: MutableState<Int>,
     content: @Composable () -> Unit
 ) {
-    val selectedItem = remember { mutableStateOf(0) }
+
+    val context = LocalContext.current
+    val dataStore = ApplicationPreferences(context)
+    val storedToken by dataStore.getToken.collectAsState("")
+    val loggedIn = !storedToken.isNullOrEmpty()
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen,
         drawerContent = {
-            ModalDrawerSheet(modifier = Modifier.width(304.dp)) {
+            ModalDrawerSheet(/*modifier =  Modifier.width(304.dp) */) {
                 Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
                 Row(
                     modifier = Modifier
@@ -56,9 +64,57 @@ fun NavDrawer(
                         modifier = Modifier.padding(start = 8.dp)
                     )
                 }
-                Divider(modifier = Modifier.alpha(0.5F).padding(bottom = 16.dp))
-                NavItem(0, selectedItem, drawerState, Icons.Default.Home, stringResource(R.string.Articles), navController, "home")
-                NavItem(1, selectedItem, drawerState, Icons.Default.Favorite, stringResource(R.string.Favorites), navController, "favorites")
+                Divider(
+                    modifier = Modifier
+                        .alpha(0.5F)
+                        .padding(bottom = 16.dp)
+                )
+                NavItem(
+                    0,
+                    selectedItem,
+                    drawerState,
+                    Icons.Default.Home,
+                    stringResource(R.string.Articles),
+                    navController,
+                    Screen.HomeScreen.route
+                )
+                if (loggedIn) NavItem(
+                    1,
+                    selectedItem,
+                    drawerState,
+                    Icons.Default.Favorite,
+                    stringResource(R.string.Favorites),
+                    navController,
+                    Screen.FavoritesScreen.route
+                )
+                NavItem(
+                    2,
+                    selectedItem,
+                    drawerState,
+                    Icons.Default.Settings,
+                    stringResource(R.string.Settings),
+                    navController,
+                    Screen.SettingsScreen.route
+                )
+                if (!loggedIn) NavItem(
+                    3,
+                    selectedItem,
+                    drawerState,
+                    Icons.Default.Login,
+                    stringResource(R.string.Login),
+                    navController,
+                    Screen.LoginScreen.route
+                )
+                if (loggedIn) NavItem(
+                    3,
+                    selectedItem,
+                    drawerState,
+                    Icons.Default.Logout,
+                    stringResource(R.string.Logout),
+                    navController,
+                    Screen.LoginScreen.route,
+                    true
+                )
             }
         },
         content = {

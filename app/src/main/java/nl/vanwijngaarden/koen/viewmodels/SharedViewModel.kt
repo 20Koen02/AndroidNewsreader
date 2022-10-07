@@ -9,13 +9,13 @@ import kotlinx.coroutines.launch
 import nl.vanwijngaarden.koen.api.Network
 import nl.vanwijngaarden.koen.models.Article
 
+
 class SharedViewModel : ViewModel() {
     private val apiClient = Network.apiClient
 
     // Articles. Empty = not loaded or failed
     private val _articlesState = MutableStateFlow(emptyList<Article>())
     val articlesState: StateFlow<List<Article>> = _articlesState
-
 
     // Next Articles Batch Id. Loaded on successful articles request
     private val _nextId = MutableStateFlow<Int?>(null)
@@ -37,9 +37,17 @@ class SharedViewModel : ViewModel() {
     private val _detailArticleState = MutableStateFlow<Article?>(null)
     val detailArticle: StateFlow<Article?> = _detailArticleState
 
-    init {
-        refreshArticles()
-    }
+    // like fail
+    private val _failedLikeState = MutableStateFlow(false)
+    val failedLikeState: StateFlow<Boolean> = _failedLikeState
+
+    // favorites page
+    private val _favoriteArticlesState = MutableStateFlow(emptyList<Article>())
+    val favoriteArticlesState: StateFlow<List<Article>> = _favoriteArticlesState
+
+    private val _failedFavoriteArticlesState = MutableStateFlow(false)
+    val failedFavoriteArticlesState: StateFlow<Boolean> = _failedFavoriteArticlesState
+
 
     fun setDetailArticle(article: Article) {
         _detailArticleState.value = article
@@ -53,15 +61,20 @@ class SharedViewModel : ViewModel() {
         return detailArticle
     }
 
-    fun refreshArticles() {
+    fun refreshArticles(authToken: String?) {
         viewModelScope.launch {
             _loadingState.value = true
             _nextId.value = null
 
-            val response = apiClient.getArticles()
+            val response = apiClient.getArticles(authToken ?: "")
             if (articlesState.value.isEmpty()) _failedArticlesState.value = !response.isSuccessful
             if (response.isSuccessful) {
                 _articlesState.value = Article.fromResponse(response.body)
+
+                // load favorites page with some favorites so it's prefilled
+                if (_favoriteArticlesState.value.isEmpty()) {
+                    _favoriteArticlesState.value = _articlesState.value.filter { it.isLiked.value }
+                }
                 _nextId.value = response.body.nextId
                 _failedArticlesState.value = false
             }
@@ -70,11 +83,11 @@ class SharedViewModel : ViewModel() {
         }
     }
 
-    fun loadMoreArticles() {
+    fun loadMoreArticles(authToken: String?) {
         if (_nextId.value != null && !_loadingMore.value) {
             _loadingMore.value = true
             viewModelScope.launch {
-                val response = apiClient.getArticleById(_nextId.value!!)
+                val response = apiClient.getArticleById(authToken, _nextId.value!!)
                 _failedMoreArticlesState.value = !response.isSuccessful
                 if (response.isSuccessful) {
                     _articlesState.value =
@@ -84,6 +97,51 @@ class SharedViewModel : ViewModel() {
                 }
                 _loadingMore.value = false
             }
+        }
+    }
+
+
+    fun likeArticle(authToken: String?, id: Int) {
+        _failedLikeState.value = false
+        viewModelScope.launch {
+            val response = apiClient.likeArticle(authToken, id)
+            if (response.isSuccessful) {
+                _detailArticleState.value!!.isLiked.value = true
+            } else {
+                _failedLikeState.value = true
+            }
+        }
+    }
+
+    fun removeLikeArticle(authToken: String?, id: Int) {
+        _failedLikeState.value = false
+        viewModelScope.launch {
+            val response = apiClient.removeLikeArticle(authToken, id)
+            if (response.isSuccessful) {
+                _detailArticleState.value!!.isLiked.value = false
+            } else {
+                _failedLikeState.value = true
+            }
+        }
+    }
+
+    fun resetLikeFail() {
+        _failedLikeState.value = false
+    }
+
+    fun refreshFavoriteArticles(authToken: String?) {
+        viewModelScope.launch {
+            _loadingState.value = true
+
+            val response = apiClient.getLikedArticles(authToken)
+            if (favoriteArticlesState.value.isEmpty()) _failedFavoriteArticlesState.value =
+                !response.isSuccessful
+            if (response.isSuccessful) {
+                _favoriteArticlesState.value = Article.fromResponse(response.body)
+                _failedFavoriteArticlesState.value = false
+            }
+
+            _loadingState.value = false
         }
     }
 }
