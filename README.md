@@ -39,10 +39,10 @@ Android Newsreader for Inholland Mobile Development minor
 - [x] Support an extra theme that also works well with both light and dark mode (+0.5)
 - [ ] Store the account credentials securely using the Android AccountManager (+1.0) (http://developer.android.com/reference/android/accounts/AccountManager.html)
 - [ ] Allow the user to filter the articles based on news feed (single and or multi select). (+1.0)
-- [ ] On the details page, show all properties of an article (timestamp as readable human date, related articles, categories) (+0.5)
+- [x] On the details page, show all properties of an article (timestamp as readable human date, related articles, categories) (+0.5)
 - [ ] On the details page, allow the user to select a category. When the user selects a category, a list of articles must be shown that all belong to that category. Clicking on an article in that list shows the details of that article. Navigation in the app becomes more complicated with this feature, but navigation must still be functional. (+2.0)  
 - [x] Localize the app for another language. (+0.3)
 - [x] Allow the user to share an article, using the OS-provided sharing functionality. (+0.3)
 - [x] Implement activity transition animations (+0.3).
 - [ ] Create a home-screen widget. The widget should show the latest article and should also show the image if the latest message has one. (+1.0). A bonus 1.0 if this is updated through a sync adapter.
-- [ ] Create a nice app icon and splash screen. (+0.5)
+- [x] Create a nice app icon and splash screen. (+0.5)

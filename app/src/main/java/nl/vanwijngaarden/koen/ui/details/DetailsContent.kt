@@ -1,11 +1,18 @@
 package nl.vanwijngaarden.koen.ui.details
 
+import android.net.Uri
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.Link
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -18,12 +25,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.google.accompanist.flowlayout.FlowRow
 import nl.vanwijngaarden.koen.R
-import nl.vanwijngaarden.koen.datastore.ApplicationPreferences
 import nl.vanwijngaarden.koen.ui.components.HtmlText
 import nl.vanwijngaarden.koen.viewmodels.SharedViewModel
 import java.text.DateFormat
@@ -35,6 +42,8 @@ fun DetailsContent(
     sharedModel: SharedViewModel
 ) {
     val article by sharedModel.detailArticle.collectAsState()
+    val listState = rememberLazyListState()
+    val context = LocalContext.current
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         Box(
@@ -89,7 +98,7 @@ fun DetailsContent(
                     contentDescription = stringResource(R.string.Categories),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
-                        .padding(end = 8.dp, bottom = 2.dp)
+                        .padding(end = 8.dp, top = 2.dp)
                         .size(24.dp)
                 )
                 Text(
@@ -109,6 +118,46 @@ fun DetailsContent(
                     )
                 }
             }
+
+            if (article!!.related.isNotEmpty()) {
+                Divider(modifier = Modifier.padding(vertical = 16.dp))
+
+                Row(
+                    verticalAlignment = Alignment.Bottom, modifier = Modifier.padding(bottom = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Link,
+                        contentDescription = stringResource(R.string.Related),
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .padding(end = 8.dp, bottom = 2.dp)
+                            .size(24.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.Related),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
+
+                Column {
+                    article!!.related.map {
+                        Text(
+                            it,
+                            modifier = Modifier
+                                .padding(vertical = 8.dp)
+                                .clickable {
+                                    CustomTabsIntent
+                                        .Builder()
+                                        .build()
+                                        .launchUrl(context, Uri.parse(it))
+                                },
+                            color = MaterialTheme.colorScheme.primary,
+                            textDecoration = TextDecoration.Underline
+                        )
+                    }
+                }
+            }
+
         }
     }
 }
