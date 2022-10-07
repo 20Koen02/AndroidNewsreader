@@ -1,5 +1,6 @@
 # 🗞 Newsreader - Android App
-Android Newsreader for Inholland Mobile Development minor
+Android Newsreader for Inholland Mobile Development minor  
+Built with Jetpack Compose & Material 3
 
 ## Todo
 #### General
@@ -45,4 +46,4 @@ Android Newsreader for Inholland Mobile Development minor
 - [x] Allow the user to share an article, using the OS-provided sharing functionality. (+0.3)
 - [x] Implement activity transition animations (+0.3).
 - [ ] Create a home-screen widget. The widget should show the latest article and should also show the image if the latest message has one. (+1.0). A bonus 1.0 if this is updated through a sync adapter.
-- [x] Create a nice app icon and splash screen. (+0.5)
+- [x] Create a nice app icon and splash screen. (+0.5) (no splash screen implemented)
